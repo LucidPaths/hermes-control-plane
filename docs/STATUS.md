@@ -1,45 +1,64 @@
 # Status — Hermes Control Plane
 
-Last updated: 2026-04-12
+Last updated: 2026-04-12 (Phase 0 complete)
 
-## What's Built
+## What's Built and Verified
 
-| Component | Local Status | Docker | Wired |
-|-----------|-------------|--------|-------|
-| hermes-agent | ✅ Running (WSL) | ❌ Not containerized | N/A |
-| hermes-webui | ❌ Not installed | ❌ | ❌ |
-| gbrain | ❌ Not installed | ❌ | ❌ |
-| self-evolution | ❌ Not installed | ❌ | ❌ |
-| browser-use | ❌ Not configured | N/A (cloud) | ❌ |
+| Component | Status | Details |
+|-----------|--------|---------|
+| hermes-agent | ✅ Running | WSL, gateway active inside session |
+| hermes-webui | ✅ Running | http://localhost:8787, health OK, uptime verified |
+| gbrain | ✅ Installed | v0.9.0, PGLite, 9 pages from ~/wiki/, keyword search working |
+| self-evolution | ✅ Installed | cloned, deps in hermes-agent venv, session DB access verified |
+| browser-use | ✅ Installed | CLI at ~/.browser-use-env, hermes local browser working |
 
-## What's Wired
+## Verified Capabilities
 
-Nothing yet. This is Phase 0 start.
+- ✅ webui health endpoint responds (`/health`)
+- ✅ gbrain search returns relevant results (tested "how does governance harness work")
+- ✅ gbrain doctor reports healthy
+- ✅ self-evolution finds hermes-agent path and skills
+- ✅ hermes-agent has 945 session files readable by self-evolution
+- ✅ browser-use doctor passes 3/5 (cloud key + optional tools missing)
+- ✅ hermes built-in browser tools work (used browser_navigate this session)
+
+## Directory Layout
+
+```
+~/hermes-control-plane/       → this repo (roadmap, scripts, config)
+~/hermes-webui/               → web UI (cloned from nesquena/hermes-webui)
+~/hermes-agent-self-evolution/ → evolution engine (cloned from NousResearch)
+~/.hermes/hermes-agent/       → hermes-agent source + venv
+~/.hermes/                    → hermes state (sessions, skills, memory, config)
+~/.gbrain/                    → gbrain PGLite database
+~/.browser-use-env/           → browser-use Python venv
+~/.local/bin/bun              → bun runtime (v1.3.12)
+~/.bun/bin/gbrain             → gbrain CLI (v0.9.0)
+```
+
+## Known Gaps
+
+| Gap | Impact | Fix |
+|-----|--------|-----|
+| gbrain has 0 embeddings | Vector search unavailable (keyword works) | Set OPENAI_API_KEY, run `gbrain embed --stale` |
+| browser-use cloud not configured | No residential proxies/anti-detect | Set BROWSER_USE_API_KEY, add `cloud_provider: browser-use` to config |
+| webui shows 0 sessions | CLI bridge needs sessions.db with data | Sessions created in webui work; historical CLI sessions need import |
+| gateway not running as persistent process | Stops when hermes CLI session ends | Run via `start.sh` or configure as systemd service |
+| Auto-start not configured | Manual start required after reboot | Run `auto-start-windows.ps1` setup instructions |
 
 ## Current Phase
 
-**Phase 0.1** — Repository bootstrap
+**Phase 0 COMPLETE.** Moving to Phase 1 (Brain Integration).
 
-### Next Steps
-- [ ] Push this repo to GitHub (LucidPaths/hermes-control-plane)
-- [ ] Clone hermes-webui into workspace
-- [ ] Clone gbrain into workspace
-- [ ] Clone hermes-agent-self-evolution into workspace
-- [ ] Write bootstrap.sh
-- [ ] Write docker-compose.minimal.yml (hermes + webui)
-- [ ] Test minimal stack
-- [ ] Write docker-compose.yml (full stack)
-- [ ] Test full stack
-- [ ] Write auto-start scripts
-
-### Known Blockers
-- hermes-agent currently runs directly in WSL, not Docker. Need to decide: containerize hermes-agent, or run webui+gbrain in Docker while hermes-agent stays on host.
-- gbrain requires `bun` runtime. Need to verify bun availability in Docker or on host.
-- self-evolution requires hermes session DB path. Need to verify path mapping.
+### Next Steps (Phase 1)
+- [ ] Write gbrain skill for hermes-agent (brain-first lookup, entity detection)
+- [ ] Set up gbrain cron recipes (daily sync, embed, doctor)
+- [ ] Design and build brain panel in hermes-webui
+- [ ] Migrate wiki/ content into gbrain schema (people/, companies/, concepts/)
 
 ### Environment
 - Platform: WSL2 Ubuntu on Windows 11
-- hermes-agent: running at ~/.hermes/hermes-agent
-- hermes config: ~/.hermes/config.yaml
-- hermes sessions: ~/.hermes/sessions/ (SQLite)
-- Python venv: ~/.hermes/hermes-agent/venv/
+- Python: 3.12 (system) + 3.11 (hermes venv)
+- Node: v22.22.1, Bun: v1.3.12
+- Disk (Windows C:): ~22 GB free
+- RAM: 32 GB, VRAM: 16 GB
