@@ -48,7 +48,7 @@ Persistent Data:
   ~/hermes-webui-state/            → webui sessions, settings, projects
 
 Auto-Start:
-  Windows Task Scheduler → PowerShell → WSL → docker compose up -d
+  Windows Task Scheduler → PowerShell → WSL → scripts/start.sh (direct execution, no Docker)
 ```
 
 ## Data Flow

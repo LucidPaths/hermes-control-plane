@@ -10,7 +10,7 @@ The north star: **tell hermes "do X" at night, wake to results.** The control pl
 
 ```
 hermes-control-plane/
-├── README.md                    # This file + overview
+├── README.md                    # Overview + architecture
 ├── docs/
 │   ├── PRINCIPLES.md            # 10 principles, derived from HiveMind
 │   ├── ROADMAP.md               # You are here
@@ -18,42 +18,22 @@ hermes-control-plane/
 │   ├── ARCHITECTURE.md          # Detailed component wiring diagram
 │   └── INTEGRATIONS.md          # Per-component integration notes
 ├── config/
-│   ├── docker-compose.yml        # Production compose (all 5 services)
-│   ├── docker-compose.minimal.yml # Minimal compose (hermes + webui only)
-│   ├── .env.example              # Template with all config keys
-│   ├── hermes/                   # hermes-agent config overlays
-│   │   └── config.overlay.yaml
-│   └── gbrain/                   # gbrain config overlays
-│       └── schema.overlay.yaml
-├── integrations/
-│   ├── gbrain/                   # gbrain wiring (skill pack, cron, MCP)
-│   │   ├── skillpack.md          # Custom skill teaching hermes to use gbrain
-│   │   ├── cron-recipes.yaml     # Scheduled sync/embed jobs
-│   │   └── mcp-bridge.md         # How gbrain MCP connects to hermes
-│   ├── evolution/                # self-evolution wiring
-│   │   ├── triggers.md           # When to run evolution (cron, session count, error patterns)
-│   │   └── skill-importer.md     # How self-evolution reads hermes sessions
-│   └── browser-use/              # browser-use wiring
-│       ├── config.md             # Cloud provider vs local config
-│       └── skill.md              # Teaching hermes to use browser-use directly
+│   ├── .env.example             # Template with all config keys
+│   ├── docker-compose.yml        # (Phase 5) Production compose
+│   └── docker-compose.minimal.yml # (Phase 5) Minimal compose
 ├── scripts/
-│   ├── bootstrap.sh              # One-command setup: clone repos, configure, start
-│   ├── start.sh                  # Start all services
+│   ├── bootstrap.sh              # One-command setup
+│   ├── start.sh                  # Start all services (direct, no Docker)
 │   ├── stop.sh                   # Graceful stop
-│   ├── status.sh                 # Check health of all services
-│   ├── auto-start-windows.ps1    # Windows Task Scheduler auto-start
-│   ├── auto-start-wsl.sh         # WSL systemd auto-start
-│   └── evolve.sh                 # Trigger a self-evolution run
-└── extensions/
-    └── webui-panels/             # Custom panels for hermes-webui
-        ├── brain-panel/           # gbrain search/entity panel
-        ├── evolution-panel/       # self-evolution status/run panel
-        └── stats-panel/           # Aggregate stats dashboard
+│   ├── status.sh                 # Health dashboard
+│   ├── evolve.sh                 # Trigger self-evolution run
+│   └── auto-start-windows.ps1    # Windows Task Scheduler auto-start
+└── integrations/                 # (Phase 1+) Per-component wiring docs
 ```
 
 ## Phase 0: Foundation (Current)
 
-**Goal:** Get all five components running locally with minimal configuration. Docker Compose up → everything works on localhost.
+**Goal:** Get all five components running locally with minimal configuration. `scripts/start.sh` → everything works on localhost.
 
 ### 0.1 Repository bootstrap
 - [ ] Create GitHub repo (`LucidPaths/hermes-control-plane`)
@@ -61,32 +41,33 @@ hermes-control-plane/
 - [ ] Clone all dependency repos into workspace
 - [ ] Write `scripts/bootstrap.sh` that:
   - Clones hermes-agent, hermes-webui, gbrain, self-evolution
-  - Checks/installs Docker, Docker Compose
+  - Checks/installs bun, uv (Python pkg mgr)
   - Creates `.env` from `.env.example`
   - Runs `gbrain init` (PGLite, no keys needed)
   - Runs hermes-agent health check
   - Prints next steps
 
-### 0.2 Docker Compose — minimal stack
-- [ ] `docker-compose.minimal.yml` — hermes-agent + hermes-webui + volume mounts
+### 0.2 Direct execution — minimal stack
+- [ ] Run `scripts/start.sh` — starts hermes-webui on port 8787
 - [ ] Verify webui can reach hermes-agent gateway
 - [ ] Verify sessions from CLI appear in webui
 - [ ] Verify workspace browsing works
 - [ ] Verify memory/skills panels work
 - [ ] Verify cron panel works
 
-### 0.3 Docker Compose — full stack
-- [ ] `docker-compose.yml` — add gbrain service + self-evolution service
+### 0.3 Direct execution — full stack
+- [ ] Run `scripts/bootstrap.sh` — installs gbrain, self-evolution, browser-use
 - [ ] gbrain init with PGLite (local, no Supabase)
+- [ ] gbrain import wiki content
 - [ ] gbrain MCP bridge to hermes-agent
-- [ ] browser-use config (local Chromium first, cloud later)
 - [ ] self-evolution can read hermes sessions
+- [ ] browser-use CLI installed, local Chromium working
 - [ ] All services healthy, webui reachable at localhost:8787
 
 ### 0.4 Auto-start
 - [ ] `auto-start-windows.ps1` — Windows Task Scheduler to run on login
   - Starts WSL
-  - Runs `docker compose up -d` in control-plane directory
+  - Runs `scripts/start.sh` in control-plane directory
   - Opens browser to localhost:8787
 - [ ] `auto-start-wsl.sh` — systemd alternative for always-on servers
 - [ ] Test: reboot machine → all services running, webui accessible
@@ -143,7 +124,7 @@ hermes-control-plane/
 **Goal:** hermes-agent's browser tools route through browser-use cloud when configured, local Chromium otherwise. Zero-config default works, cloud upgrade is a config change.
 
 ### 3.1 Local browser (default)
-- [ ] Verify hermes-agent's built-in browser tools work in Docker
+- [ ] Verify hermes-agent's built-in browser tools work in WSL
 - [ ] Install browser-use CLI: `curl -fsSL https://browser-use.com/cli/install.sh | bash`
 - [ ] Install browser-use skill: `hermes skills install skills-sh/browser-use/browser-use/browser-use`
 - [ ] Test: hermes can browse websites via CLI
@@ -177,7 +158,7 @@ hermes-control-plane/
 **Goal:** Production-grade. Reliable auto-start, backup, monitoring, security.
 
 ### 5.1 Reliability
-- [ ] Docker healthchecks for all services
+- [ ] Process healthchecks for all services
 - [ ] Automatic restart on failure (`restart: unless-stopped`)
 - [ ] Watchdog script that alerts if services are down
 - [ ] Backup: gbrain PGLite, hermes sessions, webui state
@@ -228,21 +209,23 @@ Phases 1, 2, and 3 can run in parallel after Phase 0 is complete.
 Windows Login
   └── Task Scheduler runs auto-start-windows.ps1
         └── wsl -d Ubuntu -- bash ~/hermes-control-plane/scripts/start.sh
-              └── docker compose -f docker-compose.yml up -d
-                    ├── hermes-agent (port 8080 gateway)
-                    ├── hermes-webui  (port 8787)
-                    ├── gbrain         (PGLite + MCP on stdio)
-                    └── evolution      (on-demand, not always-on)
+              ├── hermes-gateway (via hermes-agent venv)
+              ├── hermes-webui  (python3 bootstrap.py, port 8787)
+              ├── gbrain         (PGLite, on-demand CLI & MCP)
+              └── self-evolution (on-demand, not always-on)
 
 Browser auto-opens http://localhost:8787
 ```
+
+Note: Docker is deferred to Phase 5 (hardening). Current deployment runs all
+services directly in WSL via the orchestration scripts. Docker Compose configs
+remain part of the roadmap for when containerization is needed.
 
 ## What New Sessions Should Check
 
 1. Read this `ROADMAP.md` for the vision and phase structure
 2. Read `docs/STATUS.md` for what's currently built and wired
 3. Read `docs/PRINCIPLES.md` for decision-making guardrails
-4. Check `docker compose ps` to see what's running
+4. Run `scripts/status.sh` for health overview
 5. Check `docs/INTEGRATIONS.md` for per-component wiring notes
-6. Look at `scripts/status.sh` output for health overview
-7. Pick up from the first unchecked item in the current phase
+6. Pick up from the first unchecked item in the current phase

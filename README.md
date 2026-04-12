@@ -18,7 +18,7 @@ Not a new app. A wiring project. Five existing open-source systems, each excelle
 
 ```
 Windows Boot
-  └── Task Scheduler → WSL → docker compose up
+  └── Task Scheduler → WSL → scripts/start.sh
         │
         ├── hermes-agent (gateway, cron, skills, memory)
         ├── hermes-webui  (port 8787, the surface)
