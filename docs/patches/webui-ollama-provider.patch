@@ -1,0 +1,60 @@
+diff --git a/api/config.py b/api/config.py
+index d0de2b2..636a929 100644
+--- a/api/config.py
++++ b/api/config.py
+@@ -662,6 +662,7 @@ def get_available_models() -> dict:
+             "GLM_API_KEY",
+             "KIMI_API_KEY",
+             "DEEPSEEK_API_KEY",
++            "OLLAMA_API_KEY",
+         ):
+             val = os.getenv(k)
+             if val:
+@@ -682,6 +683,8 @@ def get_available_models() -> dict:
+             detected_providers.add("minimax")
+         if all_env.get("DEEPSEEK_API_KEY"):
+             detected_providers.add("deepseek")
++        if all_env.get("OLLAMA_API_KEY"):
++            detected_providers.add("ollama")
+ 
+     # 3. Fetch models from custom endpoint if base_url is configured
+     auto_detected_models = []
+@@ -742,6 +745,7 @@ def get_available_models() -> dict:
+                     "HERMES_API_KEY",
+                     "HERMES_OPENAI_API_KEY",
+                     "OPENAI_API_KEY",
++                    "OLLAMA_API_KEY",
+                     "LOCAL_API_KEY",
+                     "OPENROUTER_API_KEY",
+                     "API_KEY",
+diff --git a/api/onboarding.py b/api/onboarding.py
+index a826a56..5b7166f 100644
+--- a/api/onboarding.py
++++ b/api/onboarding.py
+@@ -50,6 +50,14 @@ _SUPPORTED_PROVIDER_SETUPS = {
+         "requires_base_url": False,
+         "models": list(_PROVIDER_MODELS.get("openai", [])),
+     },
++    "ollama": {
++        "label": "Ollama (Cloud or Local)",
++        "env_var": "OLLAMA_API_KEY",
++        "default_model": "glm-5.1",
++        "default_base_url": "https://ollama.com/v1",
++        "requires_base_url": True,
++        "models": [],
++    },
+     "custom": {
+         "label": "Custom OpenAI-compatible",
+         "env_var": "OPENAI_API_KEY",
+@@ -156,6 +164,11 @@ def _extract_current_provider(cfg: dict) -> str:
+     model_cfg = cfg.get("model", {})
+     if isinstance(model_cfg, dict):
+         provider = str(model_cfg.get("provider") or "").strip().lower()
++        # Remap "custom" to "ollama" when base_url indicates Ollama
++        if provider == "custom":
++            base_url = str(model_cfg.get("base_url") or "").lower()
++            if "ollama" in base_url:
++                provider = "ollama"
+         if provider:
+             return provider
+     return ""
