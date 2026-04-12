@@ -56,7 +56,7 @@ Patch already applied in vendored source. Documentation: [docs/patches/webui-oll
 |-----|--------|-----|
 | gbrain has 0 embeddings | Vector search unavailable (keyword works) | Set OPENAI_API_KEY, run `gbrain embed --stale` |
 | browser-use cloud not configured | No residential proxies/anti-detect | Set BROWSER_USE_API_KEY, add `cloud_provider: browser-use` to config |
-| gbrain MCP bridge | Agent can't call gbrain over MCP | Add gbrain MCP server to hermes config.yaml under mcpServers |
+| gbrain MCP bridge | Agent can't call gbrain over MCP | ~~NOT YET CONFIGURED~~ CONFIGURED in config.yaml, needs gateway restart to take effect |
 | model group shows "Custom" not "Ollama Cloud" | Cosmetic — model dropdown works, label just says Custom | Future: remap in get_available_models() provider display |
 | gateway not running as persistent process | Stops when hermes CLI session ends | Run via `start.sh` or configure as systemd service |
 | Auto-start not configured | Manual start required after reboot | Run `auto-start-windows.ps1` setup instructions |

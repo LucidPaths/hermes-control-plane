@@ -63,7 +63,7 @@ hermes-control-plane/
 - [x] Run `scripts/bootstrap.sh` — installs gbrain, self-evolution, browser-use
 - [x] gbrain init with PGLite (local, no Supabase)
 - [x] gbrain import wiki content (9 pages imported)
-- [ ] gbrain MCP bridge to hermes-agent (NOT YET CONFIGURED)
+- [ ] gbrain MCP bridge to hermes-agent (CONFIGURED in config.yaml, needs gateway restart)
 - [x] self-evolution can read hermes sessions
 - [x] browser-use CLI installed, local Chromium working
 - [x] All services healthy, webui reachable at localhost:8787
