@@ -1,0 +1,56 @@
+{
+  "name": "gbrain",
+  "version": "0.9.0",
+  "description": "Personal knowledge brain with hybrid RAG search",
+  "skills": [
+    {
+      "name": "ingest",
+      "path": "ingest/SKILL.md",
+      "description": "Ingest meetings, media, articles, and documents with back-linking, filing rules, and citation requirements"
+    },
+    {
+      "name": "query",
+      "path": "query/SKILL.md",
+      "description": "Answer questions using 3-layer search, synthesis, and citation propagation"
+    },
+    {
+      "name": "maintain",
+      "path": "maintain/SKILL.md",
+      "description": "Brain health checks: back-link enforcement, citation audit, filing validation, stale info, orphans, benchmarks"
+    },
+    {
+      "name": "enrich",
+      "path": "enrich/SKILL.md",
+      "description": "Enrich pages with tiered enrichment protocol, person/company page templates, and validation rules"
+    },
+    {
+      "name": "briefing",
+      "path": "briefing/SKILL.md",
+      "description": "Compile daily briefing with meeting context, active deals, and citation tracking"
+    },
+    {
+      "name": "migrate",
+      "path": "migrate/SKILL.md",
+      "description": "Universal migration from Obsidian, Notion, Logseq, markdown, CSV, JSON, Roam"
+    },
+    {
+      "name": "setup",
+      "path": "setup/SKILL.md",
+      "description": "Set up GBrain: auto-provision Supabase or PGLite, AGENTS.md injection, first import"
+    },
+    {
+      "name": "publish",
+      "path": "publish/SKILL.md",
+      "description": "Share brain pages as beautiful password-protected HTML (code + skill pair, zero LLM calls)"
+    }
+  ],
+  "dependencies": {
+    "runtime": "bun",
+    "package": "gbrain"
+  },
+  "setup": {
+    "skill": "setup",
+    "description": "Auto-provision Supabase and configure GBrain (< 2 min)"
+  },
+  "recipes_dir": "recipes/"
+}

@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Backup and temporary files
+*.bak
+*.swp
+*.swo
+
+# Archive directory (pre-git backups, kept on disk but not tracked)
+archive/
+
+# Local environment and secrets (but keep the example template)
+.env
+.env.*
+!.env.example
+.claude/*
+
+# Generated screenshots and transient artifacts
+screenshot-*.png
+full-UI.png
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local reference clones — never committed
+docs/

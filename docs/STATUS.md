@@ -25,25 +25,30 @@ Last updated: 2026-04-12 (Phase 0 complete)
 ## Directory Layout
 
 ```
-~/hermes-control-plane/       → this repo (roadmap, scripts, config)
-~/hermes-webui/               → web UI (cloned from nesquena/hermes-webui)
-~/hermes-agent-self-evolution/ → evolution engine (cloned from NousResearch)
-~/.hermes/hermes-agent/       → hermes-agent source + venv
+~/hermes-control-plane/       → this repo (everything in one place)
+├── upstream/hermes-webui/    → web UI source (with Ollama patch applied)
+├── upstream/self-evolution/  → DSPy + GEPA optimizer source
+├── upstream/gbrain/          → brain source (PGLite + MCP)
+├── patches/                  → our modifications to upstream
+├── extensions/               → our new code (Phase 1+)
+├── scripts/                  → orchestration
+├── config/                   → .env.example
+└── docs/                     → principles, roadmap, architecture
+~/.hermes/hermes-agent/       → hermes-agent source + venv (runtime, not vendored)
 ~/.hermes/                    → hermes state (sessions, skills, memory, config)
 ~/.gbrain/                    → gbrain PGLite database
-~/.browser-use-env/           → browser-use Python venv
-~/.local/bin/bun              → bun runtime (v1.3.12)
-~/.bun/bin/gbrain             → gbrain CLI (v0.9.0)
+~/.browser-use-env/           → browser-use Python venv (runtime, not vendored)
+~/.local/bin/bun              → bun runtime
+~/.bun/bin/gbrain             → gbrain CLI (compiled from upstream/gbrain/)
 ```
 
-## Patches Applied (to hermes-webui upstream)
+## Patches Applied (to vendored upstream/ code)
 
 | Patch | File | Root Cause | Fix |
 |-------|------|-----------|-----|
-| Ollama provider recognition | `api/onboarding.py` | WebUI only recognized 4 providers (openrouter/anthropic/openai/custom), checked OPENAI_API_KEY for custom endpoints. Ollama uses OLLAMA_API_KEY — went undetected. | Added ollama to `_SUPPORTED_PROVIDER_SETUPS`, remap `custom→ollama` when base_url contains ollama, check `OLLAMA_API_KEY` in readiness |
-| Ollama key in model discovery | `api/config.py` | `get_available_models()` fallback env scan didn't check `OLLAMA_API_KEY` | Added `OLLAMA_API_KEY` to env scan and custom endpoint auth resolution |
+| [webui-ollama-provider.patch](../patches/webui-ollama-provider.patch) | `upstream/hermes-webui/api/onboarding.py` + `api/config.py` | WebUI only recognized 4 providers (openrouter/anthropic/openai/custom), checked OPENAI_API_KEY for custom endpoints. Ollama uses OLLAMA_API_KEY — went undetected. | Added ollama to `_SUPPORTED_PROVIDER_SETUPS`, remap `custom→ollama` when base_url contains ollama, check `OLLAMA_API_KEY` in readiness |
 
-Commit: `1c2c3ac` on hermes-webui local (not pushed upstream — needs proper PR)
+Patch already applied in vendored source. Documentation: [docs/patches/webui-ollama-provider.md](patches/webui-ollama-provider.md)
 
 ## Known Gaps
 

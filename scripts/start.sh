@@ -6,7 +6,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AGENT_DIR="${HERMES_AGENT_DIR:-$HOME/.hermes/hermes-agent}"
-WEBUI_DIR="$HOME/hermes-webui"
+WEBUI_DIR="$REPO_ROOT/upstream/hermes-webui"
 WEBUI_PORT="${HERMES_WEBUI_PORT:-8787}"
 export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH"
 

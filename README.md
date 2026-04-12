@@ -4,7 +4,7 @@ The convergence layer. Hermes Agent + gbrain + self-evolution + browser-use + he
 
 ## What This Is
 
-Not a new app. A wiring project. Five existing open-source systems, each excellent alone, combined into something greater:
+Not a new app. A wiring project. Five existing open-source systems, each excellent alone, combined into something greater. All upstream source vendored in this repo under `upstream/`. See [CREDITS.md](CREDITS.md) for attributions.
 
 | Component | Repo | Role |
 |-----------|------|------|
@@ -41,18 +41,37 @@ Windows Boot
                 (on-demand)                           (markdown truth)
 ```
 
+## Repo Structure
+
+```
+hermes-control-plane/
+├── README.md                    # This file
+├── CREDITS.md                   # Per-component attribution + licenses
+├── HANDOFF.md                   # Session handoff (living document)
+├── upstream/                    # Vendored source code
+│   ├── hermes-webui/            # Web UI (with our patches applied)
+│   ├── self-evolution/         # DSPy + GEPA optimizer
+│   └── gbrain/                 # PGLite brain + MCP server
+├── patches/                     # Our modifications to upstream/
+├── extensions/                  # Our new code (webui panels, etc.)
+├── scripts/                     # Orchestration (bootstrap, start, stop, status)
+├── config/                      # .env.example
+└── docs/                        # Principles, roadmap, architecture, integrations
+```
+
 ## Quick Start
 
 ```bash
 cd ~/hermes-control-plane
-./scripts/bootstrap.sh
+./scripts/start.sh
+# Open http://localhost:8787
 ```
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the full build plan.
 
 ## Principles
 
-See [docs/PRINCIPLES.md](docs/PRINCIPLES.md) — derived from HiveMind's Principle Lattice, adapted for this project.
+See [docs/PRINCIPLES.md](docs/PRINCIPLES.md) — 10 principles derived from HiveMind's Principle Lattice.
 
 ## Status
 

@@ -1,0 +1,92 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: '0 6 * * *'  # Nightly at 6am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tier1:
+    name: Tier 1 (Mechanical)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gbrain_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - name: Run Tier 1 E2E tests
+        run: bun test test/e2e/mechanical.test.ts test/e2e/mcp.test.ts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gbrain_test
+
+  tier2:
+    name: Tier 2 (LLM Skills)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: tier1
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gbrain_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - name: Install OpenClaw
+        run: npm install -g openclaw@2026.4.9
+      - name: Configure OpenClaw MCP
+        run: |
+          mkdir -p ~/.openclaw
+          cat > ~/.openclaw/config.json << 'EOF'
+          {
+            "mcpServers": {
+              "gbrain": {
+                "command": "bun",
+                "args": ["run", "src/cli.ts", "serve"],
+                "env": {
+                  "DATABASE_URL": "${{ env.DATABASE_URL }}"
+                }
+              }
+            }
+          }
+          EOF
+      - name: Run Tier 2 skill tests
+        run: bun test test/e2e/skills.test.ts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gbrain_test
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

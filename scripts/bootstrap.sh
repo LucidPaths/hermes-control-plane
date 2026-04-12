@@ -99,28 +99,26 @@ else
 fi
 
 # ── Step 5: hermes-webui ───────────────────────────────────────────
-step "Cloning hermes-webui"
+step "Checking hermes-webui (vendored)"
 
-if [ -d "$HOME/hermes-webui" ]; then
-    ok "hermes-webui already cloned at ~/hermes-webui"
+if [ -d "$REPO_ROOT/upstream/hermes-webui" ]; then
+    ok "hermes-webui vendored at $REPO_ROOT/upstream/hermes-webui"
 else
-    git clone https://github.com/nesquena/hermes-webui.git "$HOME/hermes-webui" || fail "clone failed"
-    ok "cloned hermes-webui"
+    warn "hermes-webui not found in upstream/ — run: git clone https://github.com/nesquena/hermes-webui.git $REPO_ROOT/upstream/hermes-webui"
 fi
 
 # ── Step 6: self-evolution ─────────────────────────────────────────
-step "Cloning hermes-agent-self-evolution"
+step "Checking self-evolution (vendored)"
 
-if [ -d "$HOME/hermes-agent-self-evolution" ]; then
-    ok "self-evolution already cloned"
+if [ -d "$REPO_ROOT/upstream/self-evolution" ]; then
+    ok "self-evolution vendored at $REPO_ROOT/upstream/self-evolution"
 else
-    git clone https://github.com/NousResearch/hermes-agent-self-evolution.git "$HOME/hermes-agent-self-evolution" || fail "clone failed"
-    ok "cloned self-evolution"
+    warn "self-evolution not found in upstream/ — run: git clone https://github.com/NousResearch/hermes-agent-self-evolution.git $REPO_ROOT/upstream/self-evolution"
 fi
 
 # Install into hermes-agent venv
 if [ -d "$AGENT_DIR/venv" ] && [ -f "$AGENT_DIR/venv/bin/python" ]; then
-    uv pip install -e "$HOME/hermes-agent-self-evolution[dev]" --python "$AGENT_DIR/venv/bin/python" 2>&1 | tail -3
+    uv pip install -e "$REPO_ROOT/upstream/self-evolution[dev]" --python "$AGENT_DIR/venv/bin/python" 2>&1 | tail -3
     ok "self-evolution installed into hermes-agent venv"
 else
     warn "hermes-agent venv not found at $AGENT_DIR/venv — install self-evolution manually"
@@ -155,11 +153,11 @@ fi
 step "Bootstrap complete"
 echo ""
 echo "  Services status:"
-echo "    hermes-agent   → check: pgrep -f 'run_agent.py|gateway'"
-echo "    hermes-webui   → check: curl -s http://127.0.0.1:8787/health"
-echo "    gbrain          → check: gbrain doctor"
-echo "    self-evolution  → check: cd ~/hermes-agent-self-evolution && python -m evolution.skills.evolve_skill --help"
-echo "    browser-use     → check: source $BROWSER_USE_ENV/bin/activate && browser-use doctor"
+echo "    hermes-agent    → check: pgrep -f 'run_agent.py|gateway'"
+echo "    hermes-webui    → check: curl -s http://127.0.0.1:8787/health"
+echo "    gbrain           → check: gbrain doctor"
+echo "    self-evolution   → check: cd $REPO_ROOT/upstream/self-evolution && python -m evolution.skills.evolve_skill --help"
+echo "    browser-use      → check: source $BROWSER_USE_ENV/bin/activate && browser-use doctor"
 echo ""
 echo "  Start everything:  ~/hermes-control-plane/scripts/start.sh"
 echo "  Check status:      ~/hermes-control-plane/scripts/status.sh"

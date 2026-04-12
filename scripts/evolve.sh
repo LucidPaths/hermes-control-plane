@@ -9,7 +9,8 @@ SKILL="${1:?Usage: evolve.sh <skill-name> [iterations] [eval-source]}"
 ITERATIONS="${2:-5}"
 EVAL_SOURCE="${3:-synthetic}"
 AGENT_DIR="${HERMES_AGENT_DIR:-$HOME/.hermes/hermes-agent}"
-EVOLUTION_DIR="$HOME/hermes-agent-self-evolution"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+EVOLUTION_DIR="$REPO_ROOT/upstream/self-evolution"
 
 export HERMES_AGENT_REPO="$AGENT_DIR"
 

@@ -1,6 +1,6 @@
-# Patches — Hermes WebUI
+# WebUI Ollama Provider Patch
 
-Local patches applied to the `~/hermes-webui` clone. Not pushed upstream to nesquena/hermes-webui.
+Local patch applied to `upstream/hermes-webui/`. Patch file: `patches/webui-ollama-provider.patch`
 
 ## Patch 1: Ollama Provider Recognition
 

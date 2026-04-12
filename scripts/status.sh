@@ -4,6 +4,7 @@ set -euo pipefail
 # Hermes Control Plane — Status check
 # Shows health of all components at a glance
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH"
 WEBUI_PORT="${HERMES_WEBUI_PORT:-8787}"
 
@@ -54,15 +55,15 @@ fi
 
 # ── 4. self-evolution ──────────────────────────────────────────────
 echo "self-evolution:"
-if [ -d "$HOME/hermes-agent-self-evolution" ]; then
-    ok "cloned at ~/hermes-agent-self-evolution"
+if [ -d "$REPO_ROOT/upstream/self-evolution" ]; then
+    ok "vendored at $REPO_ROOT/upstream/self-evolution"
     # Check if installed in venv
     if [ -f "$HOME/.hermes/hermes-agent/venv/bin/python" ]; then
         RESULT=$("$HOME/.hermes/hermes-agent/venv/bin/python" -c "import evolution; print('ok')" 2>&1 || echo "fail")
         if [ "$RESULT" = "ok" ]; then
             ok "installed in hermes-agent venv"
         else
-            warn "not installed in venv — run: uv pip install -e ~/hermes-agent-self-evolution[dev]"
+            warn "not installed in venv — run: uv pip install -e $REPO_ROOT/upstream/self-evolution[dev]"
         fi
     fi
 else

@@ -11,24 +11,30 @@ The north star: **tell hermes "do X" at night, wake to results.** The control pl
 ```
 hermes-control-plane/
 ├── README.md                    # Overview + architecture
-├── docs/
-│   ├── PRINCIPLES.md            # 10 principles, derived from HiveMind
-│   ├── ROADMAP.md               # You are here
-│   ├── STATUS.md                # What's built, what's wired, what's missing
-│   ├── ARCHITECTURE.md          # Detailed component wiring diagram
-│   └── INTEGRATIONS.md          # Per-component integration notes
+├── CREDITS.md                   # Per-component attribution (creator, repo, license)
+├── HANDOFF.md                   # Session handoff (living document)
+├── upstream/                    # Vendored source code (our base to patch)
+│   ├── hermes-webui/            # Cloned from nesquena/hermes-webui (patched)
+│   ├── self-evolution/         # Cloned from NousResearch/hermes-agent-self-evolution
+│   └── gbrain/                  # Cloned from garrytan/gbrain
+├── patches/                     # Our modifications (applied on top of upstream/)
+├── extensions/                  # Our NEW code (webui panels, etc.)
+├── scripts/                     # Orchestration
+│   ├── bootstrap.sh
+│   ├── start.sh
+│   ├── stop.sh
+│   ├── status.sh
+│   ├── evolve.sh
+│   └── auto-start-windows.ps1
 ├── config/
-│   ├── .env.example             # Template with all config keys
-│   ├── docker-compose.yml        # (Phase 5) Production compose
-│   └── docker-compose.minimal.yml # (Phase 5) Minimal compose
-├── scripts/
-│   ├── bootstrap.sh              # One-command setup
-│   ├── start.sh                  # Start all services (direct, no Docker)
-│   ├── stop.sh                   # Graceful stop
-│   ├── status.sh                 # Health dashboard
-│   ├── evolve.sh                 # Trigger self-evolution run
-│   └── auto-start-windows.ps1    # Windows Task Scheduler auto-start
-└── integrations/                 # (Phase 1+) Per-component wiring docs
+│   └── .env.example
+└── docs/
+    ├── PRINCIPLES.md
+    ├── ROADMAP.md
+    ├── STATUS.md
+    ├── ARCHITECTURE.md
+    ├── INTEGRATIONS.md
+    └── patches/
 ```
 
 ## Phase 0: Foundation (Current)
@@ -36,16 +42,14 @@ hermes-control-plane/
 **Goal:** Get all five components running locally with minimal configuration. `scripts/start.sh` → everything works on localhost.
 
 ### 0.1 Repository bootstrap
-- [ ] Create GitHub repo (`LucidPaths/hermes-control-plane`)
-- [ ] Push initial structure (README, PRINCIPLES, ROADMAP, STATUS)
-- [ ] Clone all dependency repos into workspace
-- [ ] Write `scripts/bootstrap.sh` that:
-  - Clones hermes-agent, hermes-webui, gbrain, self-evolution
-  - Checks/installs bun, uv (Python pkg mgr)
-  - Creates `.env` from `.env.example`
-  - Runs `gbrain init` (PGLite, no keys needed)
-  - Runs hermes-agent health check
-  - Prints next steps
+- [x] Create GitHub repo (`LucidPaths/hermes-control-plane`)
+- [x] Push initial structure (README, PRINCIPLES, ROADMAP, STATUS)
+- [x] Vendor upstream repos into `upstream/` (hermes-webui, self-evolution, gbrain)
+- [x] Apply Ollama provider patch to vendored webui
+- [x] Create CREDITS.md with attributions
+- [x] Write orchestration scripts (bootstrap, start, stop, status, evolve)
+- [x] Write .env.example
+- [ ] Write auto-start scripts and test reboot
 
 ### 0.2 Direct execution — minimal stack
 - [ ] Run `scripts/start.sh` — starts hermes-webui on port 8787
