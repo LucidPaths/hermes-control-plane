@@ -36,13 +36,23 @@ Last updated: 2026-04-12 (Phase 0 complete)
 ~/.bun/bin/gbrain             → gbrain CLI (v0.9.0)
 ```
 
+## Patches Applied (to hermes-webui upstream)
+
+| Patch | File | Root Cause | Fix |
+|-------|------|-----------|-----|
+| Ollama provider recognition | `api/onboarding.py` | WebUI only recognized 4 providers (openrouter/anthropic/openai/custom), checked OPENAI_API_KEY for custom endpoints. Ollama uses OLLAMA_API_KEY — went undetected. | Added ollama to `_SUPPORTED_PROVIDER_SETUPS`, remap `custom→ollama` when base_url contains ollama, check `OLLAMA_API_KEY` in readiness |
+| Ollama key in model discovery | `api/config.py` | `get_available_models()` fallback env scan didn't check `OLLAMA_API_KEY` | Added `OLLAMA_API_KEY` to env scan and custom endpoint auth resolution |
+
+Commit: `1c2c3ac` on hermes-webui local (not pushed upstream — needs proper PR)
+
 ## Known Gaps
 
 | Gap | Impact | Fix |
 |-----|--------|-----|
 | gbrain has 0 embeddings | Vector search unavailable (keyword works) | Set OPENAI_API_KEY, run `gbrain embed --stale` |
 | browser-use cloud not configured | No residential proxies/anti-detect | Set BROWSER_USE_API_KEY, add `cloud_provider: browser-use` to config |
-| webui shows 0 sessions | CLI bridge needs sessions.db with data | Sessions created in webui work; historical CLI sessions need import |
+| webui shows 0 CLI sessions | CLI bridge needs sessions.db populated | Sessions created in webui work; historical CLI sessions need import |
+| model group shows "Custom" not "Ollama Cloud" | Cosmetic — model dropdown works, label just says Custom | Future: remap in get_available_models() provider display |
 | gateway not running as persistent process | Stops when hermes CLI session ends | Run via `start.sh` or configure as systemd service |
 | Auto-start not configured | Manual start required after reboot | Run `auto-start-windows.ps1` setup instructions |
 
