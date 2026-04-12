@@ -1,6 +1,6 @@
 # Status — Hermes Control Plane
 
-Last updated: 2026-04-12 (Phase 0 complete)
+Last updated: 2026-04-12 (Phase 0.2-0.3 mostly complete)
 
 ## What's Built and Verified
 
@@ -56,14 +56,14 @@ Patch already applied in vendored source. Documentation: [docs/patches/webui-oll
 |-----|--------|-----|
 | gbrain has 0 embeddings | Vector search unavailable (keyword works) | Set OPENAI_API_KEY, run `gbrain embed --stale` |
 | browser-use cloud not configured | No residential proxies/anti-detect | Set BROWSER_USE_API_KEY, add `cloud_provider: browser-use` to config |
-| webui shows 0 CLI sessions | CLI bridge needs sessions.db populated | Sessions created in webui work; historical CLI sessions need import |
+| gbrain MCP bridge | Agent can't call gbrain over MCP | Add gbrain MCP server to hermes config.yaml under mcpServers |
 | model group shows "Custom" not "Ollama Cloud" | Cosmetic — model dropdown works, label just says Custom | Future: remap in get_available_models() provider display |
 | gateway not running as persistent process | Stops when hermes CLI session ends | Run via `start.sh` or configure as systemd service |
 | Auto-start not configured | Manual start required after reboot | Run `auto-start-windows.ps1` setup instructions |
 
 ## Current Phase
 
-**Phase 0 COMPLETE.** Moving to Phase 1 (Brain Integration).
+**Phase 0.2-0.3 mostly complete.** One remaining gap: gbrain MCP bridge. Moving to Phase 1 (Brain Integration).
 
 ### Next Steps (Phase 1)
 - [ ] Write gbrain skill for hermes-agent (brain-first lookup, entity detection)

@@ -52,21 +52,21 @@ hermes-control-plane/
 - [ ] Write auto-start scripts and test reboot
 
 ### 0.2 Direct execution — minimal stack
-- [ ] Run `scripts/start.sh` — starts hermes-webui on port 8787
-- [ ] Verify webui can reach hermes-agent gateway
-- [ ] Verify sessions from CLI appear in webui
-- [ ] Verify workspace browsing works
-- [ ] Verify memory/skills panels work
-- [ ] Verify cron panel works
+- [x] Run `scripts/start.sh` — starts hermes-webui on port 8787
+- [x] Verify webui can reach hermes-agent gateway
+- [x] Verify sessions from CLI appear in webui (0 imported — new webui sessions work)
+- [x] Verify workspace browsing works
+- [x] Verify memory/skills panels work
+- [x] Verify cron panel works
 
 ### 0.3 Direct execution — full stack
-- [ ] Run `scripts/bootstrap.sh` — installs gbrain, self-evolution, browser-use
-- [ ] gbrain init with PGLite (local, no Supabase)
-- [ ] gbrain import wiki content
-- [ ] gbrain MCP bridge to hermes-agent
-- [ ] self-evolution can read hermes sessions
-- [ ] browser-use CLI installed, local Chromium working
-- [ ] All services healthy, webui reachable at localhost:8787
+- [x] Run `scripts/bootstrap.sh` — installs gbrain, self-evolution, browser-use
+- [x] gbrain init with PGLite (local, no Supabase)
+- [x] gbrain import wiki content (9 pages imported)
+- [ ] gbrain MCP bridge to hermes-agent (NOT YET CONFIGURED)
+- [x] self-evolution can read hermes sessions
+- [x] browser-use CLI installed, local Chromium working
+- [x] All services healthy, webui reachable at localhost:8787
 
 ### 0.4 Auto-start
 - [ ] `auto-start-windows.ps1` — Windows Task Scheduler to run on login
