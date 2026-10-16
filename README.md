@@ -1,3 +1,8 @@
+> **SUPERSEDED (16 Oct 2026). This repository is archived and no longer maintained.**
+> It describes the original Windows/WSL wiring plan (last real commit 12 Apr 2026). Hermes now runs on the EVO-X2 (Strix).
+> Current sources of truth: [LucidPaths/evo-x2-infrastructure](https://github.com/LucidPaths/evo-x2-infrastructure) for the host and runtime, and [LucidPaths/fleet](https://github.com/LucidPaths/fleet) for agent standards and the Grok Bot + Hermes architecture.
+> Do not reference or deploy from this repo.
+
 # Hermes Control Plane
 
 The convergence layer. Hermes Agent + gbrain + self-evolution + browser-use + hermes-webui, wired into a self-hosted, self-improving, always-on system that boots with your computer.
